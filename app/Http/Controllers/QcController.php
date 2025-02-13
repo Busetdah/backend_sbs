@@ -9,25 +9,39 @@ class QcController extends Controller
 {
     public function index()
     {
-        $statusCounts = DB::select("
-            SELECT 
-                SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec,
-                SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec
-            FROM data_weigher
-        ")[0];
+        return response()->stream(function () {
+            while (true) {
+                $statusCounts = DB::select("
+                    SELECT 
+                        SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec,
+                        SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec
+                    FROM data_weigher
+                ")[0];
 
-        $latestWeigher = DB::select("
-            SELECT * FROM data_weigher 
-            ORDER BY waktu DESC 
-            LIMIT 1
-        ");
+                $latestWeigher = DB::select("
+                    SELECT * FROM data_weigher 
+                    ORDER BY waktu DESC 
+                    LIMIT 1
+                ");
 
-        return response()->json([
-            'status_counts'   => [
-                'offspec' => $statusCounts->offspec,
-                'onspec'  => $statusCounts->onspec,
-            ],
-            'latest_weigher'  => $latestWeigher ? $latestWeigher[0] : null
+                $data = [
+                    'status_counts'   => [
+                        'offspec' => $statusCounts->offspec,
+                        'onspec'  => $statusCounts->onspec,
+                    ],
+                    'latest_weigher'  => $latestWeigher ? $latestWeigher[0] : null
+                ];
+
+                echo "data: " . json_encode($data) . "\n\n";
+                ob_flush();
+                flush();
+
+                sleep(1); 
+            }
+        }, 200, [
+            'Content-Type'  => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection'    => 'keep-alive',
         ]);
     }
 
