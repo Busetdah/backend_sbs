@@ -10,7 +10,7 @@ class HopperAirPressureController extends Controller
 {
     public function index()
     {
-        $posts = hopper_air_pressure::all();
+        $posts = hopper_air_pressure::latest('waktu')->first();
         return response()->json($posts);
     }
 
