@@ -21,7 +21,7 @@ class VariableCtq3Controller extends Controller
                 ")[0];
 
                 $predicted_weight = DB::select("
-                    SELECT predicted_weight FROM predicted_data 
+                    SELECT predicted_weight, status FROM predicted_data 
                     ORDER BY timestamp DESC 
                     LIMIT 1
                 ");
