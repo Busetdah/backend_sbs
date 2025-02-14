@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\hopper_air_pressure;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HopperAirPressureController extends Controller
 {
