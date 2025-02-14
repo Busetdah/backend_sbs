@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\hopper_weigher_2;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HopperWeigher2Controller extends Controller
 {
@@ -30,7 +31,6 @@ class HopperWeigher2Controller extends Controller
             'Cache-Control' => 'no-cache',
             'Connection'    => 'keep-alive',
         ]);
-        
     }
 
     public function store(Request $request)

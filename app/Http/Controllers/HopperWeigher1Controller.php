@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\hopper_weigher_1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HopperWeigher1Controller extends Controller
 {
