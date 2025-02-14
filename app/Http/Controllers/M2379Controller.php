@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\m2379;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class M2379Controller extends Controller
 {

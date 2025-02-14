@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\m712d_2;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class M712d2Controller extends Controller
 {
