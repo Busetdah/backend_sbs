@@ -13,7 +13,7 @@ class HopperWeigher1Controller extends Controller
     {
         return response()->stream(function () {
             while (true) {
-                $latestWeigher2 = DB::select("SELECT lpvweigher1, svweigher1 FROM lpvsvweigher1 ORDER BY waktu DESC LIMIT 1");
+                $latestWeigher1 = DB::select("SELECT lpvweigher1, svweigher1 FROM lpvsvweigher1 ORDER BY waktu DESC LIMIT 1");
         
                 $data = [
                     'lpvweigher1' => $latestWeigher1 ? $latestWeigher1[0]->lpvweigher1 : 0,
