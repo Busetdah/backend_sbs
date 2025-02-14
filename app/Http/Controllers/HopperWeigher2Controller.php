@@ -10,8 +10,27 @@ class HopperWeigher2Controller extends Controller
 {
     public function index()
     {
-        $posts = hopper_weigher_2::latest('waktu')->first();
-        return response()->json($posts);
+        return response()->stream(function () {
+            while (true) {
+                $latestWeigher2 = DB::select("SELECT lpvweigher2, svweigher2 FROM lpvsvweigher2 ORDER BY waktu DESC LIMIT 1");
+        
+                $data = [
+                    'lpvweigher2' => $latestWeigher2 ? $latestWeigher2[0]->lpvweigher2 : 0,
+                    'svweigher2' => $latestWeigher2 ? $latestWeigher2[0]->svweigher2 : 0
+                ];
+        
+                echo "data: " . json_encode($data) . "\n\n";
+                ob_flush();
+                flush();
+        
+                sleep(1);
+            }
+        }, 200, [
+            'Content-Type'  => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection'    => 'keep-alive',
+        ]);
+        
     }
 
     public function store(Request $request)

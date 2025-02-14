@@ -10,8 +10,25 @@ class HopperAirPressureController extends Controller
 {
     public function index()
     {
-        $posts = hopper_air_pressure::latest('waktu')->first();
-        return response()->json($posts);
+        return response()->stream(function () {
+            while (true) {
+                $latestPressure = DB::select("SELECT pressure FROM data_pressure ORDER BY waktu DESC LIMIT 1");
+                
+                $data = [
+                    'pressure' => $latestPressure ? $latestPressure[0]->pressure : 0
+                ];
+                
+                echo "data: " . json_encode($data) . "\n\n";
+                ob_flush();
+                flush();
+                
+                sleep(1);
+            }
+        }, 200, [
+            'Content-Type'  => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection'    => 'keep-alive',
+        ]);
     }
 
     public function store(Request $request)
