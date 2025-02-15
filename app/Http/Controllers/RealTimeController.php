@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class SSEController extends Controller
+class RealTimeController extends Controller
 {
     public function stream()
     {

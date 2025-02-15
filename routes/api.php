@@ -23,6 +23,8 @@ use App\Http\Controllers\VariableCtq2Controller;
 use App\Http\Controllers\VariableCtq3Controller;
 use App\Http\Controllers\PredictController;
 use App\Http\Controllers\DataTrainingController;
+use App\Http\Controllers\RealTimeController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,6 +35,8 @@ use App\Http\Controllers\DataTrainingController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('/realtime', [RealTimeController::class, 'stream']);
 Route::post('/store-data-training', [DataTrainingController::class, 'store']);
 Route::get('/predict', [PredictController::class, 'predict']);
 Route::get('/countertotal', [CounterTotalController::class, 'index']);
