@@ -24,6 +24,7 @@ use App\Http\Controllers\VariableCtq3Controller;
 use App\Http\Controllers\PredictController;
 use App\Http\Controllers\DataTrainingController;
 use App\Http\Controllers\RealTimeController;
+use App\Http\Controllers\HistoryTrendController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ use App\Http\Controllers\RealTimeController;
 |
 */
 
+
+Route::get('/history', [HistoryTrendController::class, 'index']);
 Route::get('/realtime', [RealTimeController::class, 'stream']);
 Route::post('/store-data-training', [DataTrainingController::class, 'store']);
 Route::get('/predict', [PredictController::class, 'predict']);
