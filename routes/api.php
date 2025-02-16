@@ -25,6 +25,7 @@ use App\Http\Controllers\PredictController;
 use App\Http\Controllers\DataTrainingController;
 use App\Http\Controllers\RealTimeController;
 use App\Http\Controllers\HistoryTrendController;
+use App\Http\Controllers\HistoryPredictController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +38,7 @@ use App\Http\Controllers\HistoryTrendController;
 |
 */
 
-
+Route::get('/historypredict', [HistoryPredictController::class, 'historyPredict']);
 Route::get('/history', [HistoryTrendController::class, 'index']);
 Route::get('/realtime', [RealTimeController::class, 'stream']);
 Route::post('/store-data-training', [DataTrainingController::class, 'store']);
