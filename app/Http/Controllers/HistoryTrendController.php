@@ -48,11 +48,11 @@ class HistoryTrendController extends Controller
         $bindingsLpvsv1   = array_merge($bindingsLpvsv1, [$limit, $offset]);
         $bindingsLpvsv2   = array_merge($bindingsLpvsv2, [$limit, $offset]);
 
-        $temphumdQuery = "SELECT temp, humd, waktu FROM temphumd_sekitar $dateFilterTemphumd ORDER BY waktu DESC LIMIT ? OFFSET ?";
-        $weigherQuery  = "SELECT weigher, waktu FROM data_weigher $dateFilterWeigher ORDER BY waktu DESC LIMIT ? OFFSET ?";
-        $pressureQuery = "SELECT pressure, timestamp as waktu FROM predicted_data $dateFilterPressure ORDER BY timestamp DESC LIMIT ? OFFSET ?";
-        $lpvsv1Query   = "SELECT lpvweigher1, svweigher1, waktu FROM lpvsvweigher1 $dateFilterLpvsv1 ORDER BY waktu DESC LIMIT ? OFFSET ?";
-        $lpvsv2Query   = "SELECT lpvweigher2, svweigher2, waktu FROM lpvsvweigher2 $dateFilterLpvsv2 ORDER BY waktu DESC LIMIT ? OFFSET ?";
+        $temphumdQuery = "SELECT temp, humd, waktu FROM temphumd_sekitar $dateFilterTemphumd ORDER BY waktu ASC LIMIT ? OFFSET ?";
+        $weigherQuery  = "SELECT weigher, waktu FROM data_weigher $dateFilterWeigher ORDER BY waktu ASC LIMIT ? OFFSET ?";
+        $pressureQuery = "SELECT pressure, timestamp as waktu FROM predicted_data $dateFilterPressure ORDER BY timestamp ASC LIMIT ? OFFSET ?";
+        $lpvsv1Query   = "SELECT lpvweigher1, svweigher1, waktu FROM lpvsvweigher1 $dateFilterLpvsv1 ORDER BY waktu ASC LIMIT ? OFFSET ?";
+        $lpvsv2Query   = "SELECT lpvweigher2, svweigher2, waktu FROM lpvsvweigher2 $dateFilterLpvsv2 ORDER BY waktu ASC LIMIT ? OFFSET ?";
 
         $temphumd = DB::select($temphumdQuery, $bindingsTemphumd);
         $weigher  = DB::select($weigherQuery, $bindingsWeigher);
