@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class HistoryPredictController extends Controller
 {
-    public function historyPredict(Request $request)
+    public function index(Request $request)
     {
         $query = DB::table('predicted_data');
 
