@@ -7,33 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class HistoryPredictController extends Controller
 {
-    public function index(Request $request)
+    public function historyPredict(Request $request)
     {
-        $limit  = $request->query('limit', 100);
-        $page   = $request->query('page', 1);
-        $offset = ($page - 1) * $limit;
+        $query = DB::table('predicted_data');
 
-        $start = $request->query('start');
-        $end   = $request->query('end');  
-
-        $dateFilter = "";
-        $bindings   = [];
-
-        if ($start && $end) {
-            $dateFilter = "WHERE timestamp BETWEEN ? AND ?";
-            $bindings   = [$start, $end];
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('waktu', [$request->start_date, $request->end_date]);
         }
 
-        $bindings = array_merge($bindings, [$limit, $offset]);
+        $historypredict = $query->paginate(100); 
 
-        $query = "SELECT timestamp as waktu, pressure, gatevalve, predicted_weight, status 
-                  FROM predicted_data 
-                  $dateFilter 
-                  ORDER BY timestamp ASC 
-                  LIMIT ? OFFSET ?";
-
-        $data = DB::select($query, $bindings);
-
-        return response()->json($data);
+        return response()->json($historypredict, 200);
     }
+
 }
