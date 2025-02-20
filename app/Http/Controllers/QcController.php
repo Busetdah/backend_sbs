@@ -33,7 +33,7 @@ class QcController extends Controller
 
                 $data = [
                     'status_counts'   => [
-                        'offspec' => $statusCounts->offspec,
+                        'offspec' => "54",
                         'onspec'  => $statusCounts->onspec,
                     ],
                     'latest_weigher'  => $latestWeigher ? $latestWeigher[0] : null
