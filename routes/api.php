@@ -83,7 +83,8 @@ Route::post('/variablectq1', [VariableCtqController::class, 'store']);
 Route::get('/variablectq2', [VariableCtq2Controller::class, 'index']);
 Route::post('/variablectq2', [VariableCtq2Controller::class, 'store']);
 Route::get('/variablectq3', [VariableCtq3Controller::class, 'index']);
-Route::post('/variablectq3', [VariableCtq3Controller::class, 'store']);
+Route::post('/variablectq3/store', [VariableCtq3Controller::class, 'store']);
+Route::post('/variablectq3/reset', [VariableCtq3Controller::class, 'resetData']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
