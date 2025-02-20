@@ -11,13 +11,11 @@ class QcController extends Controller
     {
         return response()->stream(function () {
             while (true) {
-                // Ambil waktu reset terakhir (jika belum ada, gunakan waktu paling awal)
                 $resetTime = DB::table('reset_tracker')->orderBy('reset_time', 'desc')->value('reset_time');
                 if (!$resetTime) {
-                    $resetTime = '1970-01-01 00:00:00'; // Default agar semua data diambil pertama kali
+                    $resetTime = '1970-01-01 00:00:00';
                 }
 
-                // Hitung hanya data setelah waktu reset terakhir
                 $statusCounts = DB::select("
                     SELECT 
                         SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec,
@@ -74,7 +72,6 @@ class QcController extends Controller
         }
     }
 
-    // Tambahkan fungsi reset
     public function resetData()
     {
         DB::table('reset_tracker')->insert([

@@ -38,6 +38,7 @@ use App\Http\Controllers\HistoryPredictController;
 |
 */
 
+Route::get('/qc/reset', [QcController::class, 'resetData']);
 Route::get('/historypredict', [HistoryPredictController::class, 'historyPredict']);
 Route::get('/history', [HistoryTrendController::class, 'index']);
 Route::get('/realtime', [RealTimeController::class, 'stream']);
