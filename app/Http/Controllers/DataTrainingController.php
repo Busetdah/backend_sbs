@@ -16,15 +16,14 @@ class DataTrainingController extends Controller
 
         $weigherData = DB::connection('mysql_secondary')
             ->table('data_weigher')
-            ->where('weigher', '>', 0) // Hanya ambil data dengan weigher > 0
-            ->get(['weigher', 'status']); // Ambil juga kolom status
+            ->where('weigher', '>', 0)
+            ->get(['weigher', 'status']); 
 
         $gatevalveData = DB::connection('mysql_secondary')
             ->table('data_gatevalve')
             ->where('gatevalve', '!=', 0)
             ->get(['gatevalve']);
 
-        // Gabungkan data berdasarkan indeks
         $dataTraining = [];
         foreach ($weigherData as $index => $weigher) {
             $pressure = $pressureData[$index]->pressure ?? null;
@@ -32,21 +31,18 @@ class DataTrainingController extends Controller
             $weight = $weigher->weigher;
             $status = $weigher->status;
 
-            // Masukkan hanya jika pressure & gatevalve tidak NULL
             if (!is_null($pressure) && !is_null($gatevalve)) {
                 $dataTraining[] = [
                     'waktu'      => now(),
                     'pressure'   => $pressure,
                     'gatevalve'  => $gatevalve,
                     'weight'     => $weight,
-                    'status'     => $status, // Status tetap dimasukkan
+                    'status'     => $status,
                 ];
             }
         }
-
-        // Simpan ke tabel data_training jika ada data valid
         if (!empty($dataTraining)) {
-            DB::connection('mysql_secondary')->table('data_training')->insert($dataTraining);
+            DB::table('data_training')->insert($dataTraining);
             return response()->json(['message' => 'Data berhasil dimasukkan ke data_training'], 201);
         }
 
