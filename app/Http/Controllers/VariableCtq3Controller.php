@@ -14,22 +14,22 @@ class VariableCtq3Controller extends Controller
         return response()->stream(function () {
             while (true) {
                 $statusCounts = DB::select("
-                    SELECT 
-                        SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec,
-                        SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec
+                    SELECT COUNT(*) AS onspec 
                     FROM predicted_data
+                    WHERE status = 'onspec'
                 ")[0];
 
                 $predicted_weight = DB::select("
-                    SELECT predicted_weight, status FROM predicted_data 
+                    SELECT predicted_weight, status 
+                    FROM predicted_data 
+                    WHERE status = 'onspec'
                     ORDER BY timestamp DESC 
                     LIMIT 1
                 ");
 
                 $data = [
                     'status_counts'   => [
-                        'offspec' => $statusCounts->offspec,
-                        'onspec'  => $statusCounts->onspec,
+                        'onspec' => $statusCounts->onspec,
                     ],
                     'predicted_weight'  => $predicted_weight ? $predicted_weight[0] : null
                 ];
@@ -38,7 +38,7 @@ class VariableCtq3Controller extends Controller
                 ob_flush();
                 flush();
 
-                sleep(1); 
+                sleep(1);
             }
         }, 200, [
             'Content-Type'  => 'text/event-stream',
@@ -51,5 +51,21 @@ class VariableCtq3Controller extends Controller
     {
         $post = variable_ctq_3::create($request->all());
         return response()->json($post, 201);
+    }
+
+    public function resetData()
+    {
+        try {
+            DB::statement("
+                INSERT INTO reset_predicted_data (predicted_weight, status, timestamp)
+                SELECT predicted_weight, status, timestamp FROM predicted_data
+            ");
+
+            DB::table('predicted_data')->truncate();
+
+            return response()->json(['message' => 'Data berhasil direset dan disimpan ke reset_predicted_data'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal reset data', 'error' => $e->getMessage()], 500);
+        }
     }
 }
