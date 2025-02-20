@@ -6,6 +6,7 @@ use App\Models\variable_ctq_3;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class VariableCtq3Controller extends Controller
 {
@@ -13,25 +14,34 @@ class VariableCtq3Controller extends Controller
     {
         return response()->stream(function () {
             while (true) {
+                $lastReset = DB::table('reset_timestamps')
+                    ->orderBy('timestamp', 'desc')
+                    ->value('timestamp');
+
+                if (!$lastReset) {
+                    $lastReset = '1970-01-01 00:00:00';
+                }
+
                 $statusCounts = DB::select("
                     SELECT COUNT(*) AS onspec 
                     FROM predicted_data
-                    WHERE status = 'onspec'
-                ")[0];
+                    WHERE status = 'onspec' AND timestamp >= ?
+                ", [$lastReset])[0];
 
                 $predicted_weight = DB::select("
                     SELECT predicted_weight, status 
                     FROM predicted_data 
-                    WHERE status = 'onspec'
+                    WHERE status = 'onspec' AND timestamp >= ?
                     ORDER BY timestamp DESC 
                     LIMIT 1
-                ");
+                ", [$lastReset]);
 
                 $data = [
                     'status_counts'   => [
                         'onspec' => $statusCounts->onspec,
                     ],
-                    'predicted_weight'  => $predicted_weight ? $predicted_weight[0] : null
+                    'predicted_weight'  => $predicted_weight ? $predicted_weight[0] : null,
+                    'last_reset' => $lastReset
                 ];
 
                 echo "data: " . json_encode($data) . "\n\n";
@@ -56,14 +66,13 @@ class VariableCtq3Controller extends Controller
     public function resetData()
     {
         try {
-            DB::statement("
-                INSERT INTO reset_predicted_data (predicted_weight, status, timestamp)
-                SELECT predicted_weight, status, timestamp FROM predicted_data
-            ");
+            $resetTime = Carbon::now();
 
-            DB::table('predicted_data')->truncate();
+            DB::table('reset_timestamps')->insert([
+                'timestamp' => $resetTime
+            ]);
 
-            return response()->json(['message' => 'Data berhasil direset dan disimpan ke reset_predicted_data'], 200);
+            return response()->json(['message' => 'Reset berhasil', 'timestamp' => $resetTime], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Gagal reset data', 'error' => $e->getMessage()], 500);
         }
