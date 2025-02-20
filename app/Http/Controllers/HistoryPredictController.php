@@ -11,7 +11,7 @@ class HistoryPredictController extends Controller
     {
         $query = DB::table('predicted_data')
             ->where('status', 'ONSPEC')
-            ->orderBy('id', 'desc');
+            ->orderBy('id', 'asc');
 
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereBetween('waktu', [$request->start_date, $request->end_date]);
