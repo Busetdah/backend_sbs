@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class HistoryTrendController extends Controller
+class HistoryPredictController extends Controller
 {
     public function index(Request $request)
     {
