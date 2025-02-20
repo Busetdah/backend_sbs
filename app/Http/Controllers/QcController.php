@@ -11,18 +11,27 @@ class QcController extends Controller
     {
         return response()->stream(function () {
             while (true) {
+                // Ambil waktu reset terakhir (jika belum ada, gunakan waktu paling awal)
+                $resetTime = DB::table('reset_tracker')->orderBy('reset_time', 'desc')->value('reset_time');
+                if (!$resetTime) {
+                    $resetTime = '1970-01-01 00:00:00'; // Default agar semua data diambil pertama kali
+                }
+
+                // Hitung hanya data setelah waktu reset terakhir
                 $statusCounts = DB::select("
                     SELECT 
                         SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec,
                         SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec
                     FROM data_weigher
-                ")[0];
+                    WHERE waktu > ?
+                ", [$resetTime])[0];
 
                 $latestWeigher = DB::select("
                     SELECT * FROM data_weigher 
+                    WHERE waktu > ?
                     ORDER BY waktu DESC 
                     LIMIT 1
-                ");
+                ", [$resetTime]);
 
                 $data = [
                     'status_counts'   => [
@@ -48,15 +57,14 @@ class QcController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // 'waktu'   => 'required|date',
             'weigher' => 'required|numeric',
             'status'  => 'required|string'
         ]);
 
         $inserted = DB::table('data_weigher')->insert([
-            // 'waktu'   => $request->waktu,
             'weigher' => $request->weigher,
-            'status'  => $request->status
+            'status'  => $request->status,
+            'waktu'   => now() 
         ]);
 
         if ($inserted) {
@@ -64,5 +72,15 @@ class QcController extends Controller
         } else {
             return response()->json(['message' => 'Gagal menyimpan data'], 500);
         }
+    }
+
+    // Tambahkan fungsi reset
+    public function resetData()
+    {
+        DB::table('reset_tracker')->insert([
+            'reset_time' => now()
+        ]);
+
+        return response()->json(['message' => 'Data berhasil direset'], 200);
     }
 }

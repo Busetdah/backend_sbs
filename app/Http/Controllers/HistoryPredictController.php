@@ -5,19 +5,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class HistoryPredictController extends Controller
+class HistoryTrendController extends Controller
 {
-    public function historyPredict(Request $request)
+    public function index(Request $request)
     {
-        $query = DB::table('predicted_data');
+        $limit  = $request->query('limit', 100);
+        $page   = $request->query('page', 1);
+        $offset = ($page - 1) * $limit;
 
-        if ($request->has('start_date') && $request->has('end_date')) {
-            $query->whereBetween('timestamp', [$request->start_date, $request->end_date]);
+        $start = $request->query('start');
+        $end   = $request->query('end');  
+
+        $dateFilter = "";
+        $bindings   = [];
+
+        if ($start && $end) {
+            $dateFilter = "WHERE timestamp BETWEEN ? AND ?";
+            $bindings   = [$start, $end];
         }
 
-        $historypredict = $query->paginate(100); 
+        $bindings = array_merge($bindings, [$limit, $offset]);
 
-        return response()->json($historypredict, 200);
+        $query = "SELECT timestamp as waktu, pressure, gatevalve, predicted_weight, status 
+                  FROM predicted_data 
+                  $dateFilter 
+                  ORDER BY timestamp ASC 
+                  LIMIT ? OFFSET ?";
+
+        $data = DB::select($query, $bindings);
+
+        return response()->json($data);
     }
-
 }
