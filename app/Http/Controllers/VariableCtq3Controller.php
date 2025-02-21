@@ -23,16 +23,15 @@ class VariableCtq3Controller extends Controller
                 }
 
                 $statusCounts = DB::select("
-                    SELECT 
-                        SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec
+                    SELECT COUNT(*) AS onspec
                     FROM predicted_data
-                    WHERE id > ?
+                    WHERE id > ? AND status = 'onspec'
                 ", [$lastResetId])[0];
 
                 $predicted_weight = DB::select("
                     SELECT predicted_weight, status 
                     FROM predicted_data 
-                    WHERE id > ?
+                    WHERE id > ? AND status = 'onspec'
                     ORDER BY id DESC 
                     LIMIT 1
                 ", [$lastResetId]);
@@ -40,7 +39,6 @@ class VariableCtq3Controller extends Controller
                 $data = [
                     'status_counts' => [
                         'onspec' => $statusCounts->onspec ?? 0,
-                        'offspec' => 0,
                     ],
                     'predicted_weight' => $predicted_weight ? $predicted_weight[0] : null,
                 ];
