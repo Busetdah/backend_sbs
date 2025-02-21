@@ -10,51 +10,50 @@ use Carbon\Carbon;
 
 class VariableCtq3Controller extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->stream(function () {
-            while (true) {
-                $lastReset = DB::table('reset_timestamps')
-                    ->orderBy('timestamp', 'desc')
-                    ->value('timestamp');
+        $lastResetId = DB::table('reset_timestamps')
+            ->orderBy('id', 'desc')
+            ->value('id_predicted_data');
 
-                if (!$lastReset) {
-                    $lastReset = '1970-01-01 00:00:00';
-                }
+        if (!$lastResetId) {
+            $lastResetId = 0;
+        }
 
-                $statusCounts = DB::select("
-                    SELECT COUNT(*) AS onspec 
-                    FROM predicted_data
-                    WHERE status = 'onspec' AND timestamp >= ?
-                ", [$lastReset])[0];
+        $historyPredict = DB::table('predicted_data')
+            ->where('id', '>', $lastResetId)
+            ->where('status', 'onspec')
+            ->orderBy('id', 'desc')
+            ->paginate(100);
 
-                $predicted_weight = DB::select("
-                    SELECT predicted_weight, status 
-                    FROM predicted_data 
-                    WHERE status = 'onspec' AND timestamp >= ?
-                    ORDER BY timestamp DESC 
-                    LIMIT 1
-                ", [$lastReset]);
+        return response()->json($historyPredict, 200);
+    }
 
-                $data = [
-                    'status_counts'   => [
-                        'onspec' => $statusCounts->onspec,
-                    ],
-                    'predicted_weight'  => $predicted_weight ? $predicted_weight[0] : null,
-                    'last_reset' => $lastReset
-                ];
+    public function resetData()
+    {
+        try {
+            $lastPredictedId = DB::table('predicted_data')
+                ->orderBy('id', 'desc')
+                ->value('id');
 
-                echo "data: " . json_encode($data) . "\n\n";
-                ob_flush();
-                flush();
-
-                sleep(1);
+            if (!$lastPredictedId) {
+                $lastPredictedId = 0;
             }
-        }, 200, [
-            'Content-Type'  => 'text/event-stream',
-            'Cache-Control' => 'no-cache',
-            'Connection'    => 'keep-alive',
-        ]);
+
+            DB::table('reset_timestamps')->insert([
+                'id_predicted_data' => $lastPredictedId,
+            ]);
+
+            return response()->json([
+                'message' => 'Reset berhasil',
+                'reset_id' => $lastPredictedId,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal reset data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -63,18 +62,4 @@ class VariableCtq3Controller extends Controller
         return response()->json($post, 201);
     }
 
-    public function resetData()
-    {
-        try {
-            $resetTime = Carbon::now();
-
-            DB::table('reset_timestamps')->insert([
-                'timestamp' => $resetTime
-            ]);
-
-            return response()->json(['message' => 'Reset berhasil', 'timestamp' => $resetTime], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Gagal reset data', 'error' => $e->getMessage()], 500);
-        }
-    }
 }
