@@ -14,16 +14,14 @@ class VariableCtq3Controller extends Controller
     {
         return response()->stream(function () {
             while (true) {
-                // Ambil ID reset terakhir
                 $lastResetId = DB::table('reset_timestamps')
                     ->orderBy('id', 'desc')
                     ->value('predicted_data_id');
 
                 if (!$lastResetId) {
-                    $lastResetId = 0; // Jika belum pernah reset, ambil semua data
+                    $lastResetId = 0;
                 }
 
-                // Hitung jumlah OnSpec dan OffSpec
                 $statusCounts = DB::select("
                     SELECT 
                         SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec,
@@ -32,7 +30,6 @@ class VariableCtq3Controller extends Controller
                     WHERE id > ?
                 ", [$lastResetId])[0];
 
-                // Ambil 1 data terakhir setelah reset terakhir
                 $predicted_weight = DB::select("
                     SELECT predicted_weight, status 
                     FROM predicted_data 
@@ -74,7 +71,7 @@ class VariableCtq3Controller extends Controller
             }
 
             DB::table('reset_timestamps')->insert([
-                'id_predicted_data' => $lastPredictedId,
+                'predicted_data_id' => $lastPredictedId,
             ]);
 
             return response()->json([
