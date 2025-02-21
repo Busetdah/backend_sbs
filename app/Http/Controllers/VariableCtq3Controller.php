@@ -14,15 +14,39 @@ class VariableCtq3Controller extends Controller
     {
         return response()->stream(function () {
             while (true) {
+                // Ambil ID reset terakhir
                 $lastResetId = DB::table('reset_timestamps')
                     ->orderBy('id', 'desc')
-                    ->value('id') ?? 0;
+                    ->value('predicted_data_id');
 
-                $latestData = DB::select("SELECT * FROM predicted_data WHERE id > ? ORDER BY id DESC LIMIT 1", [$lastResetId]);
+                if (!$lastResetId) {
+                    $lastResetId = 0; // Jika belum pernah reset, ambil semua data
+                }
+
+                // Hitung jumlah OnSpec dan OffSpec
+                $statusCounts = DB::select("
+                    SELECT 
+                        SUM(CASE WHEN status = 'onspec' THEN 1 ELSE 0 END) AS onspec,
+                        SUM(CASE WHEN status = 'offspec' THEN 1 ELSE 0 END) AS offspec
+                    FROM predicted_data
+                    WHERE id > ?
+                ", [$lastResetId])[0];
+
+                // Ambil 1 data terakhir setelah reset terakhir
+                $predicted_weight = DB::select("
+                    SELECT predicted_weight, status 
+                    FROM predicted_data 
+                    WHERE id > ?
+                    ORDER BY id DESC 
+                    LIMIT 1
+                ", [$lastResetId]);
 
                 $data = [
-                    'latest_data' => $latestData ? $latestData[0] : null,
-                    'last_reset_id' => $lastResetId
+                    'status_counts' => [
+                        'onspec' => $statusCounts->onspec ?? 0,
+                        'offspec' => $statusCounts->offspec ?? 0,
+                    ],
+                    'predicted_weight' => $predicted_weight ? $predicted_weight[0] : null,
                 ];
 
                 echo "data: " . json_encode($data) . "\n\n";
@@ -37,7 +61,6 @@ class VariableCtq3Controller extends Controller
             'Connection'    => 'keep-alive',
         ]);
     }
-
 
     public function resetData()
     {
