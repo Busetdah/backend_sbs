@@ -41,7 +41,7 @@ class VariableCtq3Controller extends Controller
                 $data = [
                     'status_counts' => [
                         'onspec' => $statusCounts->onspec ?? 0,
-                        'offspec' => $statusCounts->offspec ?? 0,
+                        'offspec' => '0',
                     ],
                     'predicted_weight' => $predicted_weight ? $predicted_weight[0] : null,
                 ];
