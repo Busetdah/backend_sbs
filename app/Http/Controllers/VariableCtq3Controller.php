@@ -10,24 +10,34 @@ use Carbon\Carbon;
 
 class VariableCtq3Controller extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $lastResetId = DB::table('reset_timestamps')
-            ->orderBy('id', 'desc')
-            ->value('id_predicted_data');
+        return response()->stream(function () {
+            while (true) {
+                $lastResetId = DB::table('reset_timestamps')
+                    ->orderBy('id', 'desc')
+                    ->value('id') ?? 0;
 
-        if (!$lastResetId) {
-            $lastResetId = 0;
-        }
+                $latestData = DB::select("SELECT * FROM predicted_data WHERE id > ? ORDER BY id DESC LIMIT 1", [$lastResetId]);
 
-        $historyPredict = DB::table('predicted_data')
-            ->where('id', '>', $lastResetId)
-            ->where('status', 'onspec')
-            ->orderBy('id', 'desc')
-            ->paginate(100);
+                $data = [
+                    'latest_data' => $latestData ? $latestData[0] : null,
+                    'last_reset_id' => $lastResetId
+                ];
 
-        return response()->json($historyPredict, 200);
+                echo "data: " . json_encode($data) . "\n\n";
+                ob_flush();
+                flush();
+
+                sleep(1);
+            }
+        }, 200, [
+            'Content-Type'  => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection'    => 'keep-alive',
+        ]);
     }
+
 
     public function resetData()
     {
