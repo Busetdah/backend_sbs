@@ -39,7 +39,7 @@ use App\Http\Controllers\TempHumdController;
 |
 */
 
-Route::post('/produkdata', [TempHumdController::class, 'index']);
+Route::get('/produkdata', [TempHumdController::class, 'index']);
 Route::post('/qc/reset', [QcController::class, 'resetData']);
 Route::get('/historypredict', [HistoryPredictController::class, 'index']);
 Route::get('/history', [HistoryTrendController::class, 'index']);
