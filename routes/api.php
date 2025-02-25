@@ -26,6 +26,7 @@ use App\Http\Controllers\DataTrainingController;
 use App\Http\Controllers\RealTimeController;
 use App\Http\Controllers\HistoryTrendController;
 use App\Http\Controllers\HistoryPredictController;
+use App\Http\Controllers\TempHumdController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ use App\Http\Controllers\HistoryPredictController;
 |
 */
 
+Route::post('/produkdata', [TempHumdController::class, 'index']);
 Route::post('/qc/reset', [QcController::class, 'resetData']);
 Route::get('/historypredict', [HistoryPredictController::class, 'index']);
 Route::get('/history', [HistoryTrendController::class, 'index']);
