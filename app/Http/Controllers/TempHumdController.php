@@ -11,7 +11,8 @@ class TempHumdController extends Controller
     {
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
-        header('Connection: keep-alive');
+        header('Access-Control-Allow-Origin: *');
+        header('X-Accel-Buffering: no');
 
         while (true) {
             $latestData = DB::table('temphumd_produk')
