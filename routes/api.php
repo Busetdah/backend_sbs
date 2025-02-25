@@ -27,6 +27,7 @@ use App\Http\Controllers\RealTimeController;
 use App\Http\Controllers\HistoryTrendController;
 use App\Http\Controllers\HistoryPredictController;
 use App\Http\Controllers\TempHumdController;
+use App\Http\Controllers\SensorDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ use App\Http\Controllers\TempHumdController;
 |
 */
 
+Route::get('/sensordata', [SensorDataController::class, 'getData']);
 Route::get('/produkdata', [TempHumdController::class, 'index']);
 Route::post('/qc/reset', [QcController::class, 'resetData']);
 Route::get('/historypredict', [HistoryPredictController::class, 'index']);
