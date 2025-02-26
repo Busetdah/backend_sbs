@@ -17,7 +17,7 @@ class TempHumdController extends Controller
         while (true) {
             $latestData = DB::table('temphumd_produk')
                 ->select('temp', 'humd')
-                ->orderBy('id', 'desc')
+                ->orderBy('waktu', 'desc')
                 ->limit(1)
                 ->first();
 
