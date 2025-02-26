@@ -1,20 +1,15 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration {
-    public function up()
-    {
-        Schema::create('history_gumpalan', function (Blueprint $table) {
-            $table->id();
-            $table->timestamp('waktu')->useCurrent();
-        });
-    }
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-    public function down()
-    {
-        Schema::dropIfExists('history_gumpalan');
-    }
-};
+class HistoryGumpalan extends Model
+{
+    use HasFactory;
+
+    protected $table = 'history_gumpalan';
+    protected $fillable = ['waktu'];
+    public $timestamps = false;
+}
