@@ -20,8 +20,8 @@ class PotensiController extends Controller
 
         while (true) {
             try {
-                $latestData = DB::table('temphumd_produk')
-                    ->select('temp', 'humd', 'waktu')
+                $latestData = DB::table('status_gumpalan')
+                    ->select('status', 'waktu')
                     ->orderBy('waktu', 'desc')
                     ->limit(1)
                     ->first();
@@ -32,7 +32,7 @@ class PotensiController extends Controller
                     flush();
                 }
             } catch (\Exception $e) {
-                Log::error('Error in Potensi SSE: ' . $e->getMessage());
+                Log::error('Error in SSE: ' . $e->getMessage());
                 echo "data: {\"error\": \"Terjadi kesalahan pada server\"}\n\n";
                 ob_flush();
                 flush();
