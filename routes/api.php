@@ -28,6 +28,7 @@ use App\Http\Controllers\HistoryTrendController;
 use App\Http\Controllers\HistoryPredictController;
 use App\Http\Controllers\TempHumdController;
 use App\Http\Controllers\SensorDataController;
+use App\Http\Controllers\GumpalanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,7 @@ use App\Http\Controllers\SensorDataController;
 |
 */
 
+Route::get('/cekgumpalan', [GumpalanController::class, 'stream']);
 Route::get('/sensordata', [SensorDataController::class, 'getData']);
 Route::get('/produkdata', [TempHumdController::class, 'index']);
 Route::post('/qc/reset', [QcController::class, 'resetData']);
