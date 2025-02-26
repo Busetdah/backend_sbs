@@ -29,6 +29,7 @@ use App\Http\Controllers\HistoryPredictController;
 use App\Http\Controllers\TempHumdController;
 use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\GumpalanController;
+use App\Http\Controllers\PotensiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,7 @@ use App\Http\Controllers\GumpalanController;
 |
 */
 
+Route::get('/potensi', [PotensiController::class, 'index']);
 Route::get('/cekgumpalan', [GumpalanController::class, 'stream']);
 Route::get('/sensordata', [SensorDataController::class, 'getData']);
 Route::get('/produkdata', [TempHumdController::class, 'index']);
