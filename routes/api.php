@@ -44,7 +44,7 @@ use App\Http\Controllers\StatusGumpalanController;
 */
 
 Route::get('/statusgumpalan', [StatusGumpalanController::class, 'index']);
-Route::get('/potensi', [PotensiController::class, 'index']);
+Route::middleware(['cors'])->get('/potensi', [PotensiController::class, 'index']);
 Route::get('/cekgumpalan', [GumpalanController::class, 'stream']);
 Route::get('/sensordata', [SensorDataController::class, 'getData']);
 Route::get('/produkdata', [TempHumdController::class, 'index']);
