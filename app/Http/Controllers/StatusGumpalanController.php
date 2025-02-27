@@ -15,9 +15,8 @@ class StatusGumpalanController extends Controller
             $page = 100;
         }
 
-        $data = DB::connection('mysql_secondary')
-            ->table('hasil_klasifikasi')
-            ->select('id', 'status_gumpalan', 'waktu')
+        $data = DB::table('hasil_klasifikasiKNN')
+            ->select('id', 'status', 'waktu')
             ->where('status', 'menggumpal')
             ->orderBy('waktu', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);

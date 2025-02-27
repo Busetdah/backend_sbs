@@ -20,9 +20,8 @@ class PotensiController extends Controller
 
         while (true) {
             try {
-                $latestData = DB::connection('mysql_secondary')
-                    ->table('hasil_klasifikasi')
-                    ->select('status_prediksi', 'waktu')
+                $latestData = DB::table('hasil_klasifikasiKNN')
+                    ->select('status', 'waktu')
                     ->orderBy('waktu', 'desc')
                     ->limit(1)
                     ->first();

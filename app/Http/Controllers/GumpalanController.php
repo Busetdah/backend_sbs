@@ -16,9 +16,8 @@ class GumpalanController extends Controller
         header('X-Accel-Buffering: no');
 
         while (true) {
-            $latestStatus = DB::connection('mysql_secondary')
-                ->table('hasil_klasifikasi')
-                ->where('status_prediksi', 'Menggumpal')
+            $latestStatus = DB::table('hasil_klasifikasiKNN')
+                ->where('status', 'Menggumpal')
                 ->orderBy('waktu', 'desc')
                 ->first();
 
@@ -31,7 +30,7 @@ class GumpalanController extends Controller
                     HistoryGumpalan::create(['waktu' => $latestStatus->waktu]);
                 }
 
-                echo "data: " . json_encode(['status' => 'Menggumpal', 'waktu' => $latestStatus->waktu]) . "\n\n";
+                echo "data: " . json_encode(['status' => 'menggumpal', 'waktu' => $latestStatus->waktu]) . "\n\n";
                 ob_flush();
                 flush();
             }
