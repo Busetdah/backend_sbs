@@ -22,7 +22,7 @@ class SensorDataController extends Controller
                     $end = Carbon::parse($request->end);
                     $query->whereBetween('waktu', [$start, $end]);
                 } else {
-                    $query->limit(100);
+                    $query->limit(10);
                 }
 
                 $data = $query->get();
