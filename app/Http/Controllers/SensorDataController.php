@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SensorDataController extends Controller
 {
-    public function streamData(Request $request)
+    public function getData(Request $request)
     {
         $response = new StreamedResponse(function () use ($request) {
             while (true) {
