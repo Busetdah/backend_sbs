@@ -16,7 +16,7 @@ class StatusGumpalanController extends Controller
         }
 
         $data = DB::table('hasil_klasifikasiKNN')
-            ->select('id', 'status', 'waktu')
+            ->select('id', 'status', 'waktu', 'temp', 'humd')
             ->orderBy('waktu', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
